@@ -1,0 +1,123 @@
+set serveroutput on;
+
+/*Feature 1*/
+-- Examples for part 1: already existing person
+select * from person;
+exec add_person('Nancy','123 Main Street','21044','1234567890');
+exec add_person('Ann','123 Gloria Street','21048', '8765567890');
+
+-- Examples for part 2: New person, old house
+select * from person;
+select * from house;
+exec add_person('Jenenta','400 Baltimore National Pike','21043', '1507907847');
+exec add_person('Kevin','123 west springs drive','21043', '1562207840');
+exec add_person('Raja','123 Gloria Street','21048', '5862205540');
+
+-- Examples for part 3: New person, new house
+select * from person;
+select * from house;
+exec add_person('Roxen','401 Baltimore National Pike','21043', '7767907847');
+exec add_person('Jony','128 west springs drive','21043', '9988207840');
+exec add_person('Simran','125 Gloria Street','21048', '5660005540');
+
+/*Feature 2*/
+-- Example 1
+-- Person who lives in the same house, house id 1,123 west springs drive, as Nancy, person id 1. So ketty and Brian ans Susan.
+select * from person;
+exec risky_people(1, 1); 
+
+-- Example 2
+-- Person who lives in the same house, house id 3, 11110 Baltimore National Pike, as Kathy, person id 3. So Amanda and Annie.
+select * from person;
+exec risky_people(3, 3);
+
+
+/* Feature 4*/
+-- Example 1: Brian and Maor were in the same flight, 1 is the person id of Brian and 4 is flight id of them both. 
+select * from person_flight;
+exec risky_people_in_flight(1,4, interval '90' day);
+
+-- Example 2: 3 is person id of Kathy.  Kathy and Jenny and Ann were in the same flight 
+select * from person_flight;
+exec risky_people_in_flight(3,5, interval '90' day);
+
+-- Example 3: 2 is Ann and Jenny and Kathy were in the same flight
+select * from person_flight;
+exec risky_people_in_flight(2,5, interval '90' day);
+
+/*Feature 5*/
+exec new_event_finder ('Dinner', date '2020-03-19', '142 Bel Air RD');
+exec new_event_finder ('Party', date '2019-04-11', '12 Allender RD');
+
+
+
+/*Feature 6*/
+exec recent_contact(INTERVAL '30' day);
+--Example 1: List people's names and phone numbers for those whose current status is positive
+select pid, pname, phone from person where status = 1; 
+
+--each such person P, list names and phone numbers of people who have attended the same event with that person in the last X days
+select * from person_event;
+
+
+
+/*Feature 7*/
+--Example 1: First check whether an event with the input ID exists. If not print a message saying the event does not exist. 
+Select * from event;
+exec insert_person_event(10,list_of_person(1,2,3));
+
+--Example 2: check each input person ID, if there is no person with that ID, print a message saying the person does not exist. 
+Select * from person;
+exec insert_person_event(1,list_of_person(12));
+
+--Example 3: each input person ID, check whether the person id and event id combination are already in event_person table. If so print a message 'No need to insert'. 
+select * from person_event;
+exec insert_person_event(1,list_of_person(1,2));
+
+--Example 4: If the combination does not exist, insert a row into person_event table for that input person ID and event ID.
+select * from person_event where pid = 4;
+exec insert_person_event(1,list_of_person(1,2,4));
+select * from person_event where pid = 4;
+
+/*Feature 8*/
+--Example 1: Please first check whether the person table has such a person with the input name and phone number. If not, please print an error message 'No such person'
+Select * from person;
+exec get_person_tests('shobana', '4103101122');
+
+--Example 2: If the person does exist, print out the results sorted by test date in descending order
+exec get_person_tests('Ann', '8765567890');
+Select pt.* from person_test pt, person p where pt.pid = p.pid and pname = 'Ann';
+/*Feature 9*/
+exec print_suspected_people(1, timestamp '2020-12-2 13:10:00.00', INTERVAL '30' day, INTERVAL '10' day);
+
+/*Feature 10*/
+--Example 1: Case Statistics. Please print out the following statistics
+exec case_stat(INTERVAL '10' day);
+
+Select * from person;
+Select * from person p, house h where p.hid = h.hid and p.status = 1;
+select * from person_test order by test_date desc;
+
+/* Feature 11*/
+--c1 test case: So there are 2 cases within the input time begining Aug 10 to Oct 14, one on 10-OCT-20 and 08-OCT-20
+select * from person_test;
+exec daily_stat(timestamp '2020-08-10 13:10:00.00', timestamp '2020-10-14 13:10:00.00');
+
+--c2 test case: There is 1 new case within the time period which is on Oct 13 and person id is 3
+select * from person_test;
+exec daily_stat(timestamp '2020-08-2 15:16:00.00', timestamp '2020-10-13 10:10:00.00');
+
+--c3 test case: accumulated positive cases during the input time period
+select * from person_test;
+exec daily_stat(timestamp '2020-08-02 15:16:00.00', timestamp '2020-10-25 10:10:00.00');
+
+--c4 test case: There is 1 recovered case within the time period recovered on Nov 2 but tested positive on Oct 10
+select * from person_test;
+exec daily_stat(timestamp '2020-10-10 16:10:00.00', timestamp '2020-11-02 10:10:00.00');
+
+/* Feature 12*/
+--- for 1st one , pid 3,kathy tested negative on 01-OCT-20 but positive on 13-OCT-20
+--- for 2nd one , pid 6,Jenny tested negative on 03-OCT-20 but positive on 08-OCT-20
+select * from person_test;
+exec print_hotspot(date '2020-10-14', interval '5' day, 10);
+

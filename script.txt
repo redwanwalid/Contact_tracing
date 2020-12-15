@@ -1,0 +1,785 @@
+/*Drop tables*/
+drop table person_flight cascade constraints;
+drop table flight cascade constraints;
+drop table person_event cascade constraints;
+drop table event cascade constraints;
+drop table person_test cascade constraints;
+drop table person cascade constraints;
+drop table house cascade constraints;
+
+drop sequence new_tid_seq;
+drop sequence new_event_seq;
+drop sequence hid_seq;
+drop sequence pid_seq;
+
+create sequence hid_seq start with 6;
+create sequence pid_seq start with 12;
+
+/*House Table */
+create table house(
+    hid int, 
+    address varchar(50), 
+    zip varchar(10),
+    primary key (hid)
+    );
+
+insert into house values(1, '123 west springs drive', '21043');
+insert into house values(2, '123 Hilltop Road', '21022');
+insert into house values(3, '11110 Baltimore National Pike', '21042');
+insert into house values(4, '70781 Baltimore National Pike', '21042');
+insert into house values(5, '400 Baltimore National Pike', '21043');
+
+/*Person Table */
+create table person (
+    pid int,
+    hid int,
+    pname varchar(50), 
+    phone varchar(20),
+    status int,
+    primary key (pid),
+    foreign key(hid) references house(hid)
+    );
+
+insert into person values(1, 1, 'Nancy', '1234567890', 1);
+insert into person values(2, 2, 'Ann', '8765567890', 0);
+insert into person values(3, 3, 'Kathy', '7657865890', 1);
+insert into person values(4, 4, 'Maor', '8790654690', 0);
+insert into person values(5, 1, 'Susan', '7657458897', 0);
+insert into person values(6, 1, 'Ketty', '7778865890', 1);
+insert into person values(7, 1, 'Brian', '7631588760', 0);
+insert into person values(8, 2, 'Jenny', '8971865890', 1);
+insert into person values(9, 2, 'Armand', '7697541890', 0);
+insert into person values(10, 3, 'Amanda', '7636878890', 1);
+insert into person values(11, 3, 'Annie', '7631125690', 0);
+
+
+/*Person_Test Table */
+create table person_test(
+    tid int,
+    pid int,
+    test_date timestamp,
+    test_result number, 
+    primary key(tid), 
+    foreign key(pid) references Person
+    );
+
+insert into person_test values(1,1,timestamp '2020-12-2 13:10:00.00',1);
+insert into person_test values(2,2,timestamp '2020-08-2 15:16:00.00',1);
+insert into person_test values(3,3,timestamp '2020-10-1 10:11:00.00',0);
+insert into person_test values(4,4,timestamp '2020-10-10 16:10:00.00',1);
+insert into person_test values(5,5,timestamp '2020-12-10 10:10:00.00',1);
+insert into person_test values(6,2,timestamp '2020-12-11 10:10:00.00',1);
+insert into person_test values(7,5,timestamp '2020-11-10 10:10:00.00',0);
+insert into person_test values(8,6,timestamp '2020-10-03 10:10:00.00',0);
+insert into person_test values(9,6,timestamp '2020-10-08 10:10:00.00',1);
+insert into person_test values(10,1,timestamp '2020-10-02 10:10:00.00',0);
+insert into person_test values(11,3,timestamp '2020-10-13 10:10:00.00',1);
+insert into person_test values(12, 4,timestamp '2020-11-02 10:10:00.00',0);
+
+/* Event Table */
+create table event(
+    eid int,
+    ename varchar(30),
+    edate date,
+    eaddress varchar(50),
+    primary key (eid)
+    ); 
+
+
+insert into event values (1, 'Dinner', date '2020-12-1', '142 Bel Air RD');
+insert into event values (2, 'Party', date '2020-11-29', '16 York RD');
+insert into event values (3, 'Lunch', date '2020-4-5', '501 Ashwood Ave');
+insert into event values (4, 'Meeting', date '2020-4-15', '825 Valley St');
+insert into event values (5, 'Meeting', date '2020-8-21', 'A3 Chd St');
+
+/* Person_Event Table */
+create table person_event(
+    pid int, 
+    eid int,
+    primary key (pid, eid),
+    foreign key(pid) references person,
+    foreign key(eid) references event
+    );
+
+
+insert into person_event values (1,1);
+insert into person_event values (1,3);
+insert into person_event values (1,4);
+insert into person_event values (2,1);
+insert into person_event values (2,5);
+insert into person_event values (2,4);
+insert into person_event values (3,1);
+insert into person_event values (3,2);
+insert into person_event values (3,3);
+insert into person_event values (3,4);
+insert into person_event values (3,5);
+insert into person_event values (4,2);
+insert into person_event values (4,4);
+insert into person_event values (5,2);
+insert into person_event values (5,3);
+insert into person_event values (5,5);
+insert into person_event values (8,1);
+insert into person_event values (9,1);
+
+
+/* Flight Table */
+create table flight(
+    fid int, 
+    fdate timestamp, 
+    fnumber  varchar(30), 
+    primary key (fid)
+    );
+
+insert into flight values (1, timestamp '2020-12-1 11:30:00', 'DL 3585' );
+insert into flight values (2, timestamp '2020-7-30 05:10:00', 'DL 2035' );
+insert into flight values (3, timestamp '2020-9-7 08:20:00', 'SWA2507' );
+insert into flight values (4, timestamp '2020-10-3 07:40:00', 'SWA1005' );
+insert into flight values (5, timestamp '2020-10-7 09:20:00', 'DL 3450' );
+
+/* Person_Flight Table */
+create table person_flight(
+    pid int, 
+    fid int, 
+    primary key (pid, fid), 
+    foreign key (pid) references Person(pid),
+    foreign key (fid) references Flight(fid)
+    );
+
+insert into person_flight values (1, 2);
+insert into person_flight values (2, 3);
+insert into person_flight values (3, 5);
+insert into person_flight values (4, 1);
+insert into person_flight values (5, 2);
+insert into person_flight values (1, 1);
+insert into person_flight values (6,2);
+insert into person_flight values (7,3);
+insert into person_flight values (8,5);
+insert into person_flight values (9,1);
+insert into person_flight values (10,2);
+insert into person_flight values (4,4);
+insert into person_flight values (1,4);
+insert into person_flight values (2,5);
+
+commit;
+
+------------------------------------------------------------------------------------------------------------
+/*
+Feature 1: add a person to the database. Input includes name of person, home address and zip code, phone#, and set status to null. Please do the following:
+1) check if a person already exists with same name and phone number. If so print a message: 'person already exists!'
+2) otherwise, check whether there is a house with same address and zip. If so, just insert a row into person table with input name, phone number, the id of house with that address and zip, and status as null. Print a message saying person inserted with existing house and print out newly assigned person.  
+3) if the house does not exist as in step 2), insert a row into house table with a new house id, input address and zip. Next insert a row into person table. Print a message saying a new house created with the newly assigned house id, and a person inserted with the new person id.
+*/
+create or replace procedure add_person(p_name in varchar, h_add in varchar, z_code in varchar, phone_no in varchar)
+IS
+    quantity_p int;
+    quantity_h int;
+    house_id number;
+    x int;
+    y int;
+Begin
+    --- implicit sursor to count the number of people with same name and phone number
+    select count(*) into quantity_p from person where pname = p_name and phone = phone_no;
+    --- implicit cursor to count the number of houses with the same address and zip code
+    select count(*) into quantity_h from house where address = h_add and zip = z_code;
+    
+    if quantity_p > 0 then
+        dbms_output.put_line('Person already exists');
+    
+    elsif quantity_h > 0 and quantity_p = 0 then
+        select hid into house_id from house where address = h_add and zip = z_code;
+        select pid_seq.nextval into x from dual;
+        insert into person values(x, house_id, p_name, phone_no, null);   
+        dbms_output.put_line('Newly assigned person id: '|| x || ' with person name '|| p_name ||' added with existing house with house id:' || house_id);
+    
+    else         
+        select hid_seq.nextval into y from dual;
+        insert into house values(y, h_add, z_code);
+        
+        select pid_seq.nextval into x from dual;
+        insert into person values(x, y, p_name, phone_no, null);   
+        dbms_output.put_line('Newly assigned person id: '|| x || ' with person name '|| p_name ||' added with new house with house id: '||y);
+    
+    end if;
+
+End;
+/
+
+-------------------------------------------------------------------------------------------------------------
+/*
+Feature 2: List people's names and phone numbers for those whose current status is positive. Then for each such person P, list names, phone numbers, and status of people who live in the same house as P (do not print information for P again).    
+*/
+create or replace procedure risky_people(p_id in number, h_id in number)
+IS
+    p_name varchar2(50);
+    p_phone varchar2(50);
+    house_id number;
+    Roommate varchar2(50);
+    r_phone varchar2(50);
+    r_status number;
+    --- explicit cursor to find name, phone, status of rommates of the input person id 
+    cursor c2 is select pname, phone, status from person where hid = h_id and pid != p_id;
+    --- explicit cursor to find name, phone of person who tested positive for covid
+    cursor c1 is select pname, phone from person where status = 1;
+Begin
+    open c1;
+    dbms_output.put_line('Covid positive people in the community: ');
+    loop
+    fetch c1 into p_name, p_phone;
+    exit when c1% notfound;
+    dbms_output.put_line('Person Name is ' || p_name || ', Phone number is ' || p_phone);
+    end loop;
+    
+    open c2;
+    dbms_output.put_line('Risky people living in the same house: ');
+    loop
+    fetch c2 into Roommate, r_phone, r_status;
+    exit when c2% notfound;
+    dbms_output.put_line('Person Name is ' || Roommate || ', Phone number is ' || r_phone || ', and Status is ' || r_status);
+    end loop;
+    
+    exception 
+    when no_data_found then 
+    dbms_output.put_line('No such person');
+End;
+/
+
+-------------------------------------------------------------------------------------------------------------------------------
+/*Feature 3: Enter a new test result and update current status. Input includes person ID, test date and test result. 
+1)First check whether there is a person with the input person ID. If not please print an error message. 
+2)Next check whether an existing test exists with the same person ID and test date, 
+  if so just update the test result. 
+  Otherwise insert a new row with input person ID, test date, and test result into person_test. 
+3)Finally check whether this is the latest test result for the same person. 
+  if so please update the status of that person in person table to the new result.
+*/
+
+
+create sequence new_tid_seq start with 6;
+/
+create or replace procedure Update_Status_Check(Person_ID in INT, T_date in timestamp, T_result Number)
+IS
+    P_ID int;
+    T_ID int;
+    t_id_count int;
+    p_id_count int;
+    t_test_result int;
+Begin
+    select count(*) into P_ID from person where PID = Person_ID;       
+    if P_ID = 0 then
+        dbms_output.put_line('No Person ID found');  
+    else
+        select count(*) into t_id_count from person_test where test_date = t_date and PID = Person_ID;
+        if  t_id_count = 0 then        
+          select new_tid_seq.nextval into T_ID from dual;
+         insert into person_test values(T_ID, P_ID, T_date, T_result);
+          dbms_output.put_line('The new test reulst with Test ID: '|| T_ID || ' for the following PID '|| P_ID ||' has been added to the table');
+        
+       else
+          select tid into t_id from person_test where test_date = t_date and PID = Person_ID;
+          update person_test
+          set test_result = T_result
+          where tid = T_ID and pid = Person_ID and test_date = t_date;
+    
+          select count(*) into p_id_count from person_test where pid = Person_ID;
+          if p_id_count > 1 then
+             select test_result into t_test_result from person_test where test_date = (select max(test_date) from person_test where pid = Person_ID) and PID = Person_ID;
+              
+          else 
+              update person
+              set status = t_result
+              where pid = Person_ID; 
+          end if;
+       end if;
+    end if;   
+  
+end;
+/
+-------------------------------------------------------------------------------------------------------------------------------
+/*
+Feature 4: List people's names and phone numbers for those whose current status is positive. Then for each such person P, list names and phone numbers of people who were on the same flight with this person in the last X days where X is an input parameter.  Please do not include P in the result. You can use sysdate as current date.
+*/
+
+create or replace procedure risky_people_in_flight(p_id in number, f_id in number, x interval day to second)
+IS
+    p_name varchar2(50);
+    p_phone varchar2(50);
+    house_id number;
+    Flightmate varchar2(50);
+    r_phone varchar2(50);
+    r_status number;
+    --- explicit cursor to find name, phone of person who were in the same flight with someone who tested positive recently
+    cursor c2 is select distinct (pname), phone, status from person, person_event, person_flight, flight where person.pid = person_event.pid and person_event.pid = person_flight.pid and person_flight.fid = flight.fid and flight.fid = f_id and flight.fdate >= sysdate - x and person.pid != p_id;
+    --- explicit cursor to find name, phone of person who tested positive for covid
+    cursor c1 is select pname, phone from person where status = 1;
+Begin
+    open c1;
+    dbms_output.put_line('Covid positive people in the community: ');
+    loop
+    fetch c1 into p_name, p_phone;
+    exit when c1% notfound;
+    dbms_output.put_line('Person Name is ' || p_name || ', Phone number is ' || p_phone);
+    end loop;
+    
+    open c2;
+    dbms_output.put_line('Risky people who were in the same flight: ');
+    loop
+    fetch c2 into Flightmate, r_phone, r_status;
+    exit when c2% notfound;
+    dbms_output.put_line('Person Name is ' || Flightmate || ', Phone number is ' || r_phone || ', and Status is ' || r_status);
+    end loop;
+End;
+/
+
+-------------------------------------------------------------------------------------------------------------------------------
+/*
+Feature 5: Enter a new event. *Input includes event date, event name and address* First check whether an event with the same name, date and address exists. If so print a message that "the event exists." Otherwise insert a row into event table with *input date, name and address and print out event id.
+*/
+
+create sequence new_event_seq start with 6;
+/
+create or replace procedure new_event_finder (i_ename event.ename%type, i_edate event.edate%type, i_eaddress event.eaddress%type)
+as
+    v_count int;
+    v_eid int;
+begin
+    select count(*) into v_count from event where ename=i_ename and edate=i_edate and eaddress=i_eaddress;
+    if v_count=0 then
+        insert into event values (new_event_seq.nextval, i_ename, i_edate, i_eaddress);
+        select eid into v_eid from event where ename=i_ename and edate=i_edate and eaddress=i_eaddress;
+        dbms_output.put_line(i_ename || ' which took place on: ' || i_edate  || ' at address: ' || i_eaddress || ' has been added with an Event-ID: ' || v_eid );
+    else
+        dbms_output.put_line('This event already exists');
+    end if;
+end;
+/
+-------------------------------------------------------------------------------------------------------------------------------
+/*
+Feature 6: List people's names and phone numbers for those whose current status is positive. Then for each such person P, list names and phone numbers of people who have attended the same event with that person in the last X days. X is an input parameter. Do not include P in the result. 
+*/
+
+create or replace procedure recent_contact (x interval day to second)
+is 
+    inf_name varchar2 (50);
+    inf_phone number;
+    inf_pid int;
+    
+    p_infect_pid int;
+    p_pname varchar(50);
+    p_infect_per varchar2 (50);
+    p_infect_phone varchar2 (50);
+    
+    cursor c1 is select pid, pname, phone from person where status = 1; 
+    
+    cursor c2 is  select distinct p.pid, p.pname,  p2.pname, p2.phone from person_event pe, person p2, person_event pe2, event e, person p where pe.eid = pe2.eid and pe2.pid = p2.pid and pe.eid = e.eid and pe.pid = p.pid
+        and e.edate >= sysdate - x and pe.pid in (select pid from person where status = 1) and p.pid <> p2.pid
+        order by p.pid;
+begin
+    open c1;
+    dbms_output.put_line('People who are currently positive: ');
+    loop
+        fetch c1 into inf_pid, inf_name, inf_phone;
+        exit when c1% notfound;
+        dbms_output.put_line('Infected persons name is ' || inf_name || ' and their phone number is: ' || inf_phone);        
+    end loop;
+    
+    open c2;
+    dbms_output.put_line('People who have attended the same event: ');
+    loop
+        fetch c2 into p_infect_pid, p_pname, p_infect_per, p_infect_phone;
+        exit when c2% notfound;
+        dbms_output.put_line(p_pname || ' attended event with: ' || p_infect_per || ' and their phone number is: ' || p_infect_phone);        
+    end loop;
+End;
+/
+
+-------------------------------------------------------------------------------------------------------------------------------
+/*
+Feature 7: Enter a list of people attending an event. Input includes event ID and list of person ids. 
+1)	First check whether an event with the input ID exists. If not print a message saying the event does not exist. 
+2)	Next check each input person ID, if there is no person with that ID, print a message saying the person does not exist. 
+3)	Otherwise for each input person ID, check whether the person id and event id combination are already in event_person table. If so print a message 'No need to insert'. 
+4)	If the combination does not exist, insert a row into person_event table for that input person ID and event ID.  
+*/
+create or replace type list_of_person is 
+varray(20) of int;
+/
+
+create or replace procedure insert_person_event(v_eid int,v_p_list in list_of_person)
+as
+o_eid int;
+v_p_count int;
+v_combo_count int;
+begin
+select eid into o_eid from event where eid = v_eid;
+for i in 1..v_p_list.count
+loop
+    select count(*) into v_p_count from person p where p.pid = v_p_list(i); 
+    if v_p_count = 0 then 
+        dbms_output.put_line('No such person');  
+    else 
+        select count(*) into v_combo_count from person_event where  pid = v_p_list(i) and eid = v_eid;
+        if v_combo_count = 0 
+        then 
+            insert into person_event values (v_p_list(i),v_eid);
+            dbms_output.put_line('Inserted successfully');
+        else 
+            dbms_output.put_line('No need to insert');
+        end if;      
+    end if;         
+end loop;
+exception 
+   when no_data_found then 
+    dbms_output.put_line('No such event');
+end;
+/
+---------------------------------------------------------------------------------------------------------------
+/*Feature 8: Given the name and phone number of a person, print out test dates and test results of this person. 
+1)	Please first check whether the person table has such a person with the input name and phone number. If not, please print an error message 'No such person'. 
+2)	If the person does exist, print out the results sorted by test date in descending order.
+*/
+create or replace procedure get_person_tests(v_pname varchar, v_phone varchar)
+as
+-- expicit cursor to get the test dates and test results for the person
+cursor c1 is select pt.test_date, 
+                    case when pt.test_result = 1 then 'Positive' 
+                    else 'Negative'
+                    end as test_result 
+            from person_test pt, person p where p.pid = pt.pid and p.pname = v_pname and p.phone = v_phone order by pt.test_date desc;
+v_test_date person_test.test_date%type;
+v_test_result varchar(15);
+v_pid int;
+begin
+  select pid into v_pid from person p where p.pname = v_pname and p.phone = v_phone;   
+  open c1;
+  loop
+  fetch c1 into v_test_date, v_test_result;
+  exit when c1%notfound;  
+  dbms_output.put_line('Person test date: ' || v_test_date 
+   || ' and Person test result: ' || v_test_result);
+  end loop; 
+  close c1;
+exception 
+   when no_data_found then 
+    dbms_output.put_line('No such person');
+end;
+/
+
+----------------------------------------------------------------------------------------------------------------------------
+/* Feature 9: (This is a complex feature and the amount of work is equivalent to two features). Given a person ID and a test date D that person was tested positive, print out the suspected chain of transmission. The input also includes two X and Y (both are number of days and used in 2 b and 2 c below). Steps 2) to 4) below finds the people who may get infected by the input person. 
+*/
+
+create or replace type list_of_personid is 
+varray(100) of int;
+/
+
+create or replace type list_of_testdate is 
+varray(100) of timestamp;
+/
+
+
+create or replace procedure print_suspected_people(v_pid int, v_tdate timestamp, x interval day to second, y interval day to second)
+as
+cursor c1 is select p2.pname, p2.pid from person p, person p2 where p.hid = p2.hid and p.pid = v_pid and p2.pid <> v_pid;
+cursor c2 is select p2.pname, p2.pid from person p, person_test pt, person_event pe, event e, person_event pe2, person p2 where p.pid = pt.pid and p.pid = pe.pid and pe.eid = e.eid and pe.eid = pe2.eid and pe2.pid = p2.pid
+               and p.pid = v_pid and pt.test_date = v_tdate
+               and e.edate between pt.test_date - x and pt.test_date and p2.pid <> v_pid;
+cursor c3 is select p2.pname, p2.pid from person p, person_test pt, person_flight pf, flight f, person_flight pf2, person p2 where p.pid = pt.pid and p.pid = pf.pid and pf.fid = f.fid and pf.fid = pf2.fid and pf2.pid = p2.pid
+                and p.pid = v_pid and pt.test_date = v_tdate
+                and f.fdate between pt.test_date - x and pt.test_date and p2.pid <> v_pid;
+v_p_id int;
+v_p_name varchar(50);
+v_pname varchar(50);
+v_p2name varchar(50);
+v_p3name varchar(50);
+o_p1id int;
+o_p2id int;
+o_p3id int;
+p1_count int;
+p2_count int;
+p3_count int;
+
+temp_pid int;
+temp_tdate timestamp;
+temp_p2id int;
+temp_t2date timestamp;
+temp_p3id int;
+temp_t3date timestamp;
+
+varray_pid list_of_personid := list_of_personid();
+varray_tdate list_of_testdate := list_of_testdate();
+final_count int;
+begin
+  select p.pid, p.pname into v_p_id, v_p_name from person p,  person_test pt where p.pid = pt.pid and pt.test_result = 1 and p.pid = v_pid and pt.test_date = v_tdate;  
+  
+  open c1;
+  loop
+  fetch c1 into v_pname, o_p1id;
+  exit when c1%notfound;   
+  dbms_output.put_line(v_pname || ' is living in the same house as ' || v_p_name);
+     select count(*) into p1_count from person p, person_test pt where p.pid = pt.pid and p.pid = o_p1id and pt.test_result = 1
+       and pt.test_date between v_tdate + interval '1' day and v_tdate + y
+       and p.pid not in (select pt.pid from person_test pt where pt.test_date < v_tdate and pt.test_result = 1) ;
+     if p1_count != 0 then
+       select p.pid, pt.test_date into temp_pid, temp_tdate from person p, person_test pt where p.pid = pt.pid and p.pid = o_p1id and pt.test_result = 1
+        and pt.test_date between v_tdate + interval '1' day and v_tdate + y
+        and p.pid not in (select pt.pid from person_test pt where pt.test_date < v_tdate and pt.test_result = 1) ;
+        varray_pid.extend;
+        varray_tdate.extend;
+        varray_pid(varray_pid.LAST) := temp_pid;
+        varray_tdate(varray_tdate.LAST) := temp_tdate;
+     end if;
+  end loop; 
+  close c1;
+  
+  open c2;
+  loop
+  fetch c2 into v_p2name, o_p2id;
+  exit when c2%notfound;  
+  dbms_output.put_line(v_p2name || ' attended the same event as ' || v_p_name);
+      select count(*) into p2_count from person p, person_test pt where p.pid = pt.pid and p.pid = o_p2id and pt.test_result = 1
+       and pt.test_date between v_tdate + interval '1' day and v_tdate + y
+       and p.pid not in (select pt.pid from person_test pt where pt.test_date < v_tdate and pt.test_result = 1) ;
+      if p2_count != 0 then
+        select p.pid, pt.test_date into temp_p2id, temp_t2date from person p, person_test pt where p.pid = pt.pid and p.pid = o_p2id and pt.test_result = 1
+        and pt.test_date between v_tdate + interval '1' day and v_tdate + y
+        and p.pid not in (select pt.pid from person_test pt where pt.test_date < v_tdate and pt.test_result = 1) ;
+        
+        varray_pid.extend;
+        varray_tdate.extend;
+        varray_pid(varray_pid.LAST) := temp_p2id;
+        varray_tdate(varray_tdate.LAST) := temp_t2date;
+      end if;
+  end loop; 
+  close c2;
+  
+  open c3;
+  loop
+  fetch c3 into v_p3name, o_p3id;
+  exit when c3%notfound;  
+  dbms_output.put_line(v_p3name || ' was on the same flight with ' || v_p_name);
+      select count(*) into p3_count from person p, person_test pt where p.pid = pt.pid and p.pid = o_p3id and pt.test_result = 1
+       and pt.test_date between v_tdate + interval '1' day and v_tdate + y
+       and p.pid not in (select pt.pid from person_test pt where pt.test_date < v_tdate and pt.test_result = 1) ;
+      if p3_count != 0 then
+        select p.pid, pt.test_date into temp_p3id, temp_t3date from person p, person_test pt where p.pid = pt.pid and p.pid = o_p2id and pt.test_result = 1
+        and pt.test_date between v_tdate + interval '1' day and v_tdate + y
+        and p.pid not in (select pt.pid from person_test pt where pt.test_date < v_tdate and pt.test_result = 1) ;
+     
+        varray_pid.extend;
+        varray_tdate.extend;
+        varray_pid(varray_pid.LAST) := temp_p3id;
+        varray_tdate(varray_tdate.LAST) := temp_t3date;
+      end if;
+  end loop; 
+  close c3;
+  
+  for i in 1..varray_pid.count loop
+    if (varray_pid(i)) is not null then		
+   -- dbms_output.put_line(varray_pid(i) || varray_tdate(i));
+    print_suspected_people(varray_pid(i),varray_tdate(i),x,y);
+    end if;	
+  end loop;  
+  
+exception 
+   when no_data_found then 
+    dbms_output.put_line('Invalid Input');
+end;
+/
+-------------------------------------------------------------------------------------------------------------------------------
+/*Feature 10: Case Statistics. Please print out the following statistics:
+1) total number of people who has positive status in the database, and number of such people in each zip code. 
+2) total number of distinctive people tested positive in the last X days where X is an input. If a person tested multiple times and more than one test was positive in the time range, that person only counted as one. 
+3) accumulated number of people tested positive in each zip code. Accumulate count includes every distinctive person who was tested positive at least once.
+*/
+create or replace procedure case_stat(x interval day to second)
+is   
+    v_p_count int;
+    v_h_zip varchar(10);
+    v_pcount int;
+    v_t_count int;
+    v_a_t_count int; 
+    v_a_h_zip varchar(10);
+    
+    cursor c1 is select h.zip, count(p.pid) as p_count from person p, house h where p.hid = h.hid and p.status = 1 group by h.zip; 
+    cursor c2 is select h.zip, count(distinct pt.pid) as peo_count from person_test pt, person p, house h where p.pid = pt.pid and p.hid = h.hid and pt.test_result = 1 group by h.zip;
+begin
+    select count(*) into v_p_count from person where status = 1;
+    dbms_output.put_line('Total number of people who has positive status: ' || v_p_count);  
+    
+    open c1;   
+    loop
+        fetch c1 into v_h_zip, v_pcount;
+        exit when c1% notfound;
+        dbms_output.put_line('Total number of people who has positive status in zip code: ' || v_h_zip || ' is ' || v_pcount);
+    end loop;   
+    
+    select count(distinct pt.pid) into v_t_count from person_test pt where pt.test_result = 1 and pt.test_date >= sysdate - x;
+    dbms_output.put_line('Total number of distinctive people tested positive in the last X days: ' || v_t_count);  
+    
+    open c2;   
+    loop
+        fetch c2 into v_a_h_zip, v_a_t_count;
+        exit when c2% notfound;
+        dbms_output.put_line('Accumulated number of people tested positive in zip code: ' || v_a_h_zip || ' is ' || v_a_t_count);  
+    end loop;   
+    
+End;
+/
+-------------------------------------------------------------------------------------------------------------------------------
+/*Feature 11: Daily stats. Given a start date and end date, print out daily statistics in this period. 
+1) Print out daily accumulated positive cases during the period. For each date, the daily accumulated positive cases equals number of distinctive people tested positive by that date. 
+2) Print out daily new cases. A new case is someone who is not tested or never tested positive but tested positive on that date. 
+3) Print out daily current cases. Current cases include those who tested positive in the last test on or before the current date. 
+4) Print out daily accumulated recovered cases. Recovered case includes everyone who tested negative in the last test on or before that date, but tested positive before.
+*/
+
+create or replace procedure daily_stat(start_date in timestamp, end_date in timestamp)
+IS
+    
+    Testing_date date;
+    Person_count_a number;
+    new_case_id number;
+    Person_name_n varchar2(50);
+    Person_count_c number;
+    rec_case_id number;
+    Person_name_r varchar2(50);
+    
+    
+    --- cursor to find the accumulated positive cases during the input time period
+    cursor c1 is select count(distinct person.pid) from person, person_test 
+    where person.pid = person_test.pid and person_test.test_result = 1 and 
+    person_test.test_date >= start_date and person_test.test_date <= end_date;
+    
+    --- cursor to find the new cases
+    cursor c2 is select distinct person_test.pid from (select distinct person_test.pid 
+    from person_test where person_test.test_result != 1 and 
+    person_test.test_date >= start_date and person_test.test_date < end_date) ng_t,  person_test
+    where person_test.test_result = 1 and ng_t.pid = person_test.pid and 
+    person_test.test_date = end_date;
+    
+    --- cursor to find the daily current cases
+    cursor c3 is select person_test.test_date, count(person.pid) from person, person_test 
+    where person.pid = person_test.pid and person_test.test_result = 1 and 
+    person_test.test_date > start_date and person_test.test_date < end_date 
+    group by person_test.test_date;
+    
+    --- cursor to find recovered cases
+    cursor c4 is select distinct person_test.pid from (select distinct person_test.pid 
+    from person_test where person_test.test_result = 1 and 
+    person_test.test_date >= start_date and person_test.test_date < end_date) pg_t,  person_test
+    where person_test.test_result != 1 and pg_t.pid = person_test.pid and 
+    person_test.test_date = end_date;
+    
+    
+Begin
+    open c1;
+    dbms_output.put_line('Daily accumulated positive cases during the input time period is listed below:');
+    loop
+    fetch c1 into Person_count_a;
+    exit when c1% notfound;
+    dbms_output.put_line('The total number of people tested positive within the input time period is ' || Person_count_a);
+    end loop;
+    
+    open c2;
+    dbms_output.put_line('Daily new cases is listed below:');
+    loop
+    fetch c2 into new_case_id;
+    exit when c2% notfound;
+    dbms_output.put_line('Person id is ' || new_case_id || ' and Status is 1.');
+    end loop;
+    
+    open c3;
+    dbms_output.put_line('Daily accumulated positive cases during the input time period is listed below:');
+    loop
+    fetch c3 into Testing_date, Person_count_a;
+    exit when c3% notfound;
+    dbms_output.put_line('The test date is ' || Testing_date || ', and the number of people tested positive is ' || Person_count_a);
+    end loop;
+    
+    open c4;
+    dbms_output.put_line('Daily recovered cases is listed below:');
+    loop
+    fetch c4 into rec_case_id;
+    exit when c4% notfound;
+    dbms_output.put_line('Person id is ' || rec_case_id || ' and Status is 0.');
+    end loop; 
+End;
+/
+-------------------------------------------------------------------------------------------------------------------------------
+/*Feature 12:Find zip codes as hot spots. Hot spots are where new cases in a period of X days increase more than a threshold. Input includes D (a date), X (number of days) and Y (threshold). Do the following:
+1) Compute number of new cases for each zip code between date D-X+1 day and D where a new case in a date range is a person who lives in the zip code, and tested positive during the date range (D-X+1 to D), but never tested positive before D-X+1. 
+2) for each zip code, compute the number of new cases in the same zip code in the date range of D-2*X+1 to D-X (day).
+3) check if the count in step 1) is greater or equal to the count in step 2) * (1+Y). If so print out this zip code as hot spot. Note that if count in step 2) is zero then that zip code also qualifies if count in step 1) is not zero. 
+
+*/
+create or replace procedure print_hotspot(input_date in date, x interval day to second, threshold in number)
+IS  
+    Person_count number;
+    z_code varchar2(10);
+    Person_count_2 number;
+    z_code_2 varchar2(10);
+    Person_count_3 number;
+    z_code_3 varchar2(10);
+    Person_count_4 number;
+    z_code_4 varchar2(10);
+    
+    cursor c1 is select house.zip, count(distinct person_test.pid) from 
+    (select distinct person_test.pid, person.hid from person, person_test where person.pid = person_test.pid and
+    person_test.test_result = 1 and person_test.test_date >= input_date - x + 1 and 
+    person_test.test_date < input_date) ng_t, 
+    person_test, house
+    where person_test.test_result != 1 and ng_t.pid = person_test.pid
+    and ng_t.hid = house.hid and
+    person_test.test_date < input_date - x + 1 group by house.zip;
+
+    cursor c2 is select house.zip, count(distinct person_test.pid) from 
+    (select distinct person_test.pid, person.hid from person, person_test where person.pid = person_test.pid and
+    person_test.test_result = 1 and person_test.test_date >= input_date - 2*x + 1 and 
+    person_test.test_date < input_date - x) ng_t, 
+    person_test, house
+    where person_test.test_result != 1 and ng_t.pid = person_test.pid
+    and ng_t.hid = house.hid and
+    person_test.test_date < input_date - 2*x + 1 group by house.zip;
+
+Begin
+    
+    open c1;
+    dbms_output.put_line('Daily accumulated positive cases during the input time period is listed below:');
+    loop
+    fetch c1 into z_code, Person_count;
+    exit when c1% notfound;
+    dbms_output.put_line('The number of new cases for the zip code, ' || z_code || ', between date D-X+1 day and D is ' || Person_count);
+    end loop;
+    close c1;
+    
+    open c2;
+    dbms_output.put_line('Daily accumulated positive cases during the input time period is listed below:');
+    loop
+    fetch c2 into z_code_2, Person_count_2;
+    exit when c2% notfound;
+    dbms_output.put_line('The number of new cases for the zip code, ' || z_code_2 || ', between date D-2X+1 day and D-X is ' || Person_count_2);
+    end loop;
+    close c2;
+
+    open c1;
+    loop
+    fetch c1 into z_code_3, Person_count_3;
+    exit when c1% notfound;
+    open c2;
+    loop
+    fetch c2 into z_code_4, Person_count_4;
+    exit when c2% notfound;
+    if z_code_3 = z_code_4 then
+        if Person_count_3 >= Person_count_4 then
+        dbms_output.put_line('Zip code '||z_code_3||' marked as hotspot');
+        end if;
+    else 
+    dbms_output.put_line('No hotspot found.');
+    end if;
+    end loop;
+    end loop;
+End;
+
+
+/
+commit;
